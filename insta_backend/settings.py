@@ -15,6 +15,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# DEFAULT USER AUTH MODEL
+AUTH_USER_MODEL = "users.User"
 
 # Application definition
 
@@ -31,6 +33,7 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework_swagger",
     # apps
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -117,7 +120,6 @@ MEDIA_URL = "/media/"
 
 # REST FRAMEWORK SETTINGS
 REST_FRAMEWORK = {
-    "PAGE_SIZE": 10,
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
