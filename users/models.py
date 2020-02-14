@@ -8,8 +8,9 @@ from django.contrib.auth.models import (
 )
 
 
-class UserManger(BaseUserManager):
+class UserManager(BaseUserManager):
     def create_user(self, email, username, fullName, password=None):
+        email = self.normalize_email(email)
         user = self.model(email=email, username=username, fullName=fullName)
         user.set_password(password)
         user.save(using=self._db)
@@ -33,10 +34,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    REQUIRED_FIELDS = ["fullName", "email"]
+    REQUIRED_FIELDS = ["email", "fullName"]
     USERNAME_FIELD = "username"
 
-    objects = UserManger()
+    objects = UserManager()
 
     def save(self, *args, **kwargs):
 

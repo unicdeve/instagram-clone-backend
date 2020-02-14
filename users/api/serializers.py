@@ -36,13 +36,14 @@ class UserSerializer(serializers.ModelSerializer):
 
         return data
 
-    def save(self, *args, *kwargs):
-      self.validated_data.pop('confirm_password', None)
-      return super().save(**kwargs)
+    def save(self, *args, **kwargs):
+        self.validated_data.pop("confirm_password", None)
+        return super().save(**kwargs)
 
     def create(self, validated_data):
-      with transaction.atomic():
-        user = super().create(validated_data)
-        user.save(update_fields=['password'])
+        with transaction.atomic():
+            user = super().create(validated_data)
+            user.set_password(user.password)
+            user.save(update_fields=["password"])
 
-        return user
+            return user
