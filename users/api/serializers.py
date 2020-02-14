@@ -47,3 +47,34 @@ class UserSerializer(serializers.ModelSerializer):
             user.save(update_fields=["password"])
 
             return user
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True, max_length=30)
+    password = serializers.CharField(required=True, max_length=30)
+    confirm_password = serializers.CharField(required=True, max_length=30)
+
+    def validate(self, data):
+        if not self.context["request"].user.check_password(data["current_password"]):
+            raise serializers.ValidationError({"current_password": "Wrong password"})
+
+        if data.get("confirm_password") != data.get("password"):
+            raise serializers.ValidationError({"password": "Both passwords must match"})
+
+        return data
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data["password"])
+        instance.save()
+        return instance
+
+    def create(self, instance):
+        pass
+
+    def patch(self, validated_data):
+        pass
+
+    @property
+    def data(self):
+        return {"success": True}
+

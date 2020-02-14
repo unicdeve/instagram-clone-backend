@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from users import models
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ChangePasswordSerializer
 from .permissions import UserPermission
 
 
@@ -42,6 +42,7 @@ class LoginViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
     def create(self, request, *args, **kwargs):
+        # custom auth with email/username
         user = authenticate(request, **request.data)
 
         if user:
@@ -58,7 +59,7 @@ class LoginViewSet(viewsets.ViewSet):
             return Response(data, status=status.HTTP_200_OK)
 
         return Response(
-            ["Invalid username/email/password"], status=status.HTTP_400_BAD_REQUEST
+            ["Wrong username/email and password"], status=status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -69,5 +70,12 @@ class LogoutViewSet(viewsets.ViewSet):
         except Token.DoesNotExist:
             pass
 
-        return Response(status=status.HTTP_200_OK)
+        return Response({"success": True}, status=status.HTTP_200_OK)
 
+
+class ChangePasswordView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = ChangePasswordSerializer
+
+    def get_object(self, queryset=None):
+        return self.request.user
