@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "rest_framework_swagger",
     # apps
     "users.apps.UsersConfig",
+    "profiles.apps.ProfilesConfig",
 ]
 
 MIDDLEWARE = [
