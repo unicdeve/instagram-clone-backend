@@ -38,7 +38,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 # Serializer for GET Profile with full User
-class ProfileUserSerializer(serializers.ModelSerializer):
+class ProfileDetailsSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
 
     class Meta:

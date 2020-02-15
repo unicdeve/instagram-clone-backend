@@ -12,5 +12,6 @@ urlpatterns = [
     path("", schema_view),
     path("users/", include("users.api.urls")),
     path("profiles/", include("profiles.api.urls")),
+    path("posts/", include("posts.api.urls")),
     path("admin/", admin.site.urls),
 ]

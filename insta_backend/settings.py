@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     # apps
     "users.apps.UsersConfig",
     "profiles.apps.ProfilesConfig",
+    "posts.apps.PostsConfig",
 ]
 
 MIDDLEWARE = [
