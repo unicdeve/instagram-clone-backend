@@ -21,8 +21,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = validated_data.pop("user")
-        print(self.context.get("request").user)
-        print(user.pk)
 
         # user should not create profile for other users
         if self.context["request"].user != user:
@@ -37,3 +35,16 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         instance = Profile.objects.create(user=user, **validated_data)
         return instance
+
+
+# Serializer for GET Profile with full User
+class ProfileUserSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False)
+
+    class Meta:
+        model = Profile
+        fields = "__all__"
+        extra_kwargs = {"created_at": {"read_only": True}}
+
+    def create(self, validated_data):
+        pass
