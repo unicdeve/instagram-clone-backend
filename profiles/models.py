@@ -23,7 +23,7 @@ class Profile(models.Model):
         max_length=20, verbose_name="Phone Number", null=True, blank=True
     )
     gender = models.CharField(max_length=15, verbose_name="Gender")
-    followers = models.ManyToManyField(User, related_name='profile_folloers')
+    # followers = models.ManyToManyField(User, related_name='profile_folloers')
     created_at = models.DateTimeField(verbose_name="Created At", auto_now_add=True)
 
     class Meta:

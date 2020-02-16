@@ -2,24 +2,46 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from rest_framework import serializers
 
+from users.models import UserFollowing
 
 User = get_user_model()
 
 
+class FollowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFollowing
+        fields = ("id", "following_user_id", "created")
+
+
+class FollowersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFollowing
+        fields = ("id", "user_id", "created")
+
+
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(max_length=50, write_only=True)
+    following = serializers.SerializerMethodField()
+    followers = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        exclude = (
-            "is_superuser",
-            "is_active",
-            "is_staff",
-            "groups",
-            "user_permissions",
-            "last_login",
+        fields = (
+            "id",
+            "email",
+            "username",
+            "fullName",
+            "following",
+            "followers",
+            "confirm_password",
         )
         extra_kwargs = {"password": {"write_only": True}}
+
+    def get_following(self, obj):
+        return FollowingSerializer(obj.following.all(), many=True).data
+
+    def get_followers(self, obj):
+        return FollowersSerializer(obj.followers.all(), many=True).data
 
     def validate(self, data):
         if "confirm_password" not in data:
@@ -47,6 +69,17 @@ class UserSerializer(serializers.ModelSerializer):
             user.save(update_fields=["password"])
 
             return user
+
+
+class UserFollowingSerializer(serializers.ModelSerializer):
+    # adding request.user automatically
+    user_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = UserFollowing
+        fields = "__all__"
 
 
 class ChangePasswordSerializer(serializers.Serializer):

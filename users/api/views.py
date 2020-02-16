@@ -1,11 +1,19 @@
 from django.contrib.auth import authenticate, get_user_model
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import (
+    IsAuthenticated,
+    AllowAny,
+    IsAuthenticatedOrReadOnly,
+)
 from rest_framework import status, viewsets, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from users import models
-from .serializers import UserSerializer, ChangePasswordSerializer
+from .serializers import (
+    UserSerializer,
+    ChangePasswordSerializer,
+    UserFollowingSerializer,
+)
 from .permissions import UserPermission
 
 
@@ -36,6 +44,12 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserFollowingViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    serializer_class = UserFollowingSerializer
+    queryset = models.UserFollowing.objects.all()
 
 
 class LoginViewSet(viewsets.ViewSet):
