@@ -81,6 +81,16 @@ class UserFollowingSerializer(serializers.ModelSerializer):
         model = UserFollowing
         fields = "__all__"
 
+    def create(self, validated_data):
+        user_id = validated_data.pop("user_id")
+        following_user_id = validated_data.get("following_user_id")
+
+        if user_id == following_user_id:
+            raise serializers.ValidationError("You can't follow yourself.")
+
+        instance = UserFollowing.objects.create(user_id=user_id, **validated_data)
+        return instance
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     current_password = serializers.CharField(required=True, max_length=30)
