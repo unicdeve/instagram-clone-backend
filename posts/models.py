@@ -26,3 +26,18 @@ class Post(models.Model):
     def __str__(self):
         return self.user
 
+
+class Comment(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="user_comments"
+    )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    body = models.CharField(max_length=255, verbose_name="Comment body")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.user.username} commented on {self.post}'s post"
+

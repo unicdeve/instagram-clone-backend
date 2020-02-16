@@ -4,7 +4,7 @@ from rest_framework.permissions import (
     AllowAny,
     IsAuthenticatedOrReadOnly,
 )
-from rest_framework import status, viewsets, generics
+from rest_framework import status, viewsets, generics, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
@@ -46,7 +46,9 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserFollowingViewSet(viewsets.ModelViewSet):
+class UserFollowingViewSet(
+    mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = UserFollowingSerializer
     queryset = models.UserFollowing.objects.all()
