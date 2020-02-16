@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from users.api.serializers import UserSerializer
 
-from posts.models import Post, Comment
+from posts.models import Post, Comment, LikePost, LikeComment
 
 
 User = get_user_model()
@@ -32,16 +32,37 @@ class PostSerializer(serializers.ModelSerializer):
         return instance
 
 
+class CustomCommentLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LikeComment
+        fields = ("id", "user", "liked_at")
+        extra_kwargs = {"liked_at": {"read_only": True}}
+
+
 class PostCustomCommentSerializer(serializers.ModelSerializer):
+    likes = CustomCommentLikeSerializer(many=True)
+
     class Meta:
         model = Comment
-        fields = ("id", "user", "body", "created_at")
+        fields = ("id", "user", "body", "created_at", "likes")
         extra_kwargs = {"created_at": {"read_only": True}}
+
+
+class PostCustomLikePostSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = LikePost
+        fields = ("id", "user", "liked_at")
+        extra_kwargs = {"liked_at": {"read_only": True}}
 
 
 class PostDetailsSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     comments = PostCustomCommentSerializer(many=True)
+    likes = PostCustomLikePostSerializer(many=True)
 
     class Meta:
         model = Post
@@ -53,6 +74,7 @@ class PostDetailsSerializer(serializers.ModelSerializer):
             "caption",
             "posted_at",
             "comments",
+            "likes",
         )
         extra_kwargs = {"posted_at": {"read_only": True}}
 
@@ -66,3 +88,25 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = "__all__"
         extra_kwargs = {"created_at": {"read_only": True}}
+
+
+class LikePostSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = LikePost
+        fields = "__all__"
+        extra_kwargs = {"liked_at": {"read_only": True}}
+
+
+class LikeCommentSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = LikeComment
+        fields = "__all__"
+        extra_kwargs = {"liked_at": {"read_only": True}}
