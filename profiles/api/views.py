@@ -1,5 +1,6 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .permissions import IsCurrentUserOrReadOnly
 from .serializers import ProfileSerializer, ProfileDetailsSerializer
@@ -25,3 +26,7 @@ class ProfileDetailsViewSet(
     permission_classes = (AllowAny,)
     queryset = Profile.objects.all()
     serializer_class = ProfileDetailsSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['user', 'id']
+
+    
