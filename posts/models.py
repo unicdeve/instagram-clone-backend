@@ -21,10 +21,10 @@ class Post(models.Model):
     posted_at = models.DateTimeField(auto_now_add=True, verbose_name="Posted At")
 
     class Meta:
-        ordering = ("posted_at",)
+        ordering = ("-posted_at",)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 
 class Comment(models.Model):

@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.fullName.split(" ")[0]
 
     def __str__(self):
-        return f"@{self.username}"
+        return str(self.username) if self.username else ''
 
     class Meta:
         ordering = ("username",)
@@ -72,5 +72,5 @@ class UserFollowing(models.Model):
         ordering = ["-created"]
 
     def __str__(self):
-        f"{self.user_id} follows {self.following_user_id}"
+        return f"{self.user_id} follows {self.following_user_id}"
 

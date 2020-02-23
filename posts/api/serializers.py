@@ -4,6 +4,7 @@ from rest_framework import serializers
 from users.api.serializers import UserSerializer
 
 from posts.models import Post, Comment, LikePost, LikeComment
+from profiles.models import Profile
 
 
 User = get_user_model()
@@ -59,8 +60,22 @@ class PostCustomLikePostSerializer(serializers.ModelSerializer):
         extra_kwargs = {"liked_at": {"read_only": True}}
 
 
+class CustomProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'image', )
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    profile = CustomProfileSerializer(many=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'fullName', 'profile')
+
+
 class PostDetailsSerializer(serializers.ModelSerializer):
-    user = UserSerializer(many=False)
+    user = CustomUserSerializer(many=False)
     comments = PostCustomCommentSerializer(many=True)
     likes = PostCustomLikePostSerializer(many=True)
 
