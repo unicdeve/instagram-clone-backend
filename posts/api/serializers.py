@@ -40,8 +40,24 @@ class CustomCommentLikeSerializer(serializers.ModelSerializer):
         extra_kwargs = {"liked_at": {"read_only": True}}
 
 
+class CustomProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'image', )
+
+
+class CustomCommentUserSerializer(serializers.ModelSerializer):
+    profile = CustomProfileSerializer(many=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'fullName', 'profile')
+
+
 class PostCustomCommentSerializer(serializers.ModelSerializer):
     likes = CustomCommentLikeSerializer(many=True)
+    user = CustomCommentUserSerializer(many=False)
 
     class Meta:
         model = Comment
@@ -59,12 +75,6 @@ class PostCustomLikePostSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "liked_at")
         extra_kwargs = {"liked_at": {"read_only": True}}
 
-
-class CustomProfileSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Profile
-        fields = ('id', 'image', )
 
 class CustomUserSerializer(serializers.ModelSerializer):
     profile = CustomProfileSerializer(many=False)

@@ -10,6 +10,7 @@ schema_view = get_swagger_view(title="Instagram Clone")
 
 urlpatterns = [
     path("", schema_view),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path("users/", include("users.api.urls")),
     path("profiles/", include("profiles.api.urls")),
     path("posts/", include("posts.api.urls")),
